@@ -1,4 +1,4 @@
-﻿namespace EmployeeAdminPortal.Models
+﻿namespace EmployeeAdminPortal.Controllers
 {
     public class GetEmployeeByNameDto
     {

@@ -26,45 +26,7 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(employees);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateEmployee(AddEmployeeDto addEmployeeDto)
-        {
-            try
-            {
-                var employeeEntiry = new Employee()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = addEmployeeDto.Name,
-                    Email = addEmployeeDto.Email,
-                    Phone = addEmployeeDto.Phone,
-                    Salary = addEmployeeDto.Salary
-                };
-
-                DbContext.Employees.Add(employeeEntiry);
-                await DbContext.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetEmployees), new { id = employeeEntiry.Id }, employeeEntiry);
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest();
-            }
-
-
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteEmployee(Guid id)
-        {
-            var employee = await DbContext.Employees.FindAsync(id);
-            if (employee == null)
-            {
-                return NotFound("Employee not found.");
-            }
-            DbContext.Employees.Remove(employee);
-            await DbContext.SaveChangesAsync();
-            return NoContent();
-        }
+        // GET: api/employees/highest-salary
         [HttpGet("highest-salary")]
         public async Task<IActionResult> GetEmployeeWithHighestSalary()
         {
@@ -87,6 +49,7 @@ namespace EmployeeAdminPortal.Controllers
             }
         }
 
+        // POST: api/employees/by-name
         [HttpPost("by-name")]
         public async Task<IActionResult> GetEmployeeByName([FromBody] GetEmployeeByNameDto request)
         {
@@ -113,5 +76,50 @@ namespace EmployeeAdminPortal.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee(AddEmployeeDto addEmployeeDto)
+        {
+            try
+            {
+                // Check if employee name already exists (case-insensitive)
+                var existingEmployee = await DbContext.Employees
+                    .FirstOrDefaultAsync(e => e.Name.ToLower() == addEmployeeDto.Name.ToLower());
+
+                if (existingEmployee != null)
+                {
+                    return Conflict($"Employee with name '{addEmployeeDto.Name}' already exists.");
+                }
+
+                var employeeEntity = new Employee()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = addEmployeeDto.Name,
+                    Email = addEmployeeDto.Email,
+                    Phone = addEmployeeDto.Phone,
+                    Salary = addEmployeeDto.Salary
+                };
+
+                DbContext.Employees.Add(employeeEntity);
+                await DbContext.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetEmployees), new { id = employeeEntity.Id }, employeeEntity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occurred while creating the employee.");
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEmployee(Guid id)
+        {
+            var employee = await DbContext.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound("Employee not found.");
+            }
+            DbContext.Employees.Remove(employee);
+            await DbContext.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

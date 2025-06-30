@@ -6,12 +6,32 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddControllers();
 
-// Configure MySQL Database Context
+// Configure Database Context based on environment
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, MySqlServerVersion.LatestSupportedServerVersion,
-        mySqlOptions => mySqlOptions.EnableRetryOnFailure());
+
+    // Check if we're in Azure (production) or local development
+    if (builder.Environment.IsProduction() || connectionString.Contains("database.windows.net"))
+    {
+        // Use SQL Server for Azure
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+        Console.WriteLine("🔗 Configured for Azure SQL Server");
+    }
+    else
+    {
+        // Use MySQL for local development
+        var localConnection = builder.Configuration.GetConnectionString("LocalConnection") ?? connectionString;
+        options.UseMySql(localConnection, MySqlServerVersion.LatestSupportedServerVersion,
+            mySqlOptions => mySqlOptions.EnableRetryOnFailure());
+        Console.WriteLine("🔗 Configured for Local MySQL");
+    }
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +49,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.CanConnectAsync();
         Console.WriteLine("✅ Database connection successful!");
         Console.WriteLine($"Connected to: {context.Database.GetDbConnection().Database}");
+        Console.WriteLine($"Provider: {context.Database.ProviderName}");
     }
     catch (Exception ex)
     {
