@@ -12,7 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     // Check if we're in Azure (production) or local development
-    if (builder.Environment.IsProduction() || connectionString.Contains("database.windows.net"))
+    if (builder.Environment.IsProduction() || (!string.IsNullOrEmpty(connectionString) && connectionString.Contains("database.windows.net")))
     {
         // Use SQL Server for Azure
         options.UseSqlServer(connectionString, sqlOptions =>
@@ -27,7 +27,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     else
     {
         // Use MySQL for local development
-        var localConnection = builder.Configuration.GetConnectionString("LocalConnection") ?? connectionString;
+        var localConnection = builder.Configuration.GetConnectionString("LocalConnection") ?? connectionString ?? "";
         options.UseMySql(localConnection, MySqlServerVersion.LatestSupportedServerVersion,
             mySqlOptions => mySqlOptions.EnableRetryOnFailure());
         Console.WriteLine("🔗 Configured for Local MySQL");
