@@ -34,8 +34,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     }
 });
 
+// Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Employee Admin Portal API",
+        Version = "v1",
+        Description = "API for managing employees - Test your endpoints here!"
+    });
+});
 
 var app = builder.Build();
 
@@ -58,12 +67,34 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure pipeline
-if (app.Environment.IsDevelopment())
+// Configure pipeline - Enable Swagger in all environments for API testing
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Admin Portal API v1");
+    c.RoutePrefix = "swagger"; // This makes Swagger available at /swagger
+    c.DocumentTitle = "Employee Admin Portal API";
+});
+
+// Add a root route that redirects to Swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
+
+// Add a simple API info endpoint
+app.MapGet("/api", () => new
+{
+    message = "Welcome to Employee Admin Portal API! 🎉",
+    description = "This is an API for managing employees. Use /swagger to test the endpoints.",
+    version = "1.0.0",
+    endpoints = new[]
+    {
+        "GET /api/employees - Get all employees",
+        "POST /api/employees - Create a new employee",
+        "GET /api/employees/highest-salary - Get employee with highest salary",
+        "POST /api/employees/by-name - Get employee by name",
+        "DELETE /api/employees?id={guid} - Delete an employee"
+    },
+    swaggerUrl = "/swagger"
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
