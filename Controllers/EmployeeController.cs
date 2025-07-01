@@ -160,6 +160,22 @@ namespace EmployeeAdminPortal.Controllers
         {
             try
             {
+                // Check if model state is valid
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .SelectMany(x => x.Value.Errors)
+                        .Select(x => x.ErrorMessage);
+
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Validation failed",
+                        errors = errors
+                    });
+                }
+
                 // Validate input
                 if (addEmployeeDto == null)
                 {
@@ -183,13 +199,28 @@ namespace EmployeeAdminPortal.Controllers
                     });
                 }
 
+                // Check if employee email already exists (case-insensitive)
+                var existingEmailEmployee = await DbContext.Employees
+                    .FirstOrDefaultAsync(e => e.Email.ToLower() == addEmployeeDto.Email.ToLower());
+
+                if (existingEmailEmployee != null)
+                {
+                    return Conflict(new
+                    {
+                        success = false,
+                        message = $"Employee with email '{addEmployeeDto.Email}' already exists"
+                    });
+                }
+
                 var employeeEntity = new Employee()
                 {
                     Id = Guid.NewGuid(),
-                    Name = addEmployeeDto.Name,
-                    Email = addEmployeeDto.Email,
-                    Phone = addEmployeeDto.Phone,
-                    Salary = addEmployeeDto.Salary
+                    Name = addEmployeeDto.Name.Trim(),
+                    Email = addEmployeeDto.Email.Trim().ToLower(),
+                    Phone = addEmployeeDto.Phone?.Trim(),
+                    Salary = addEmployeeDto.Salary,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 DbContext.Employees.Add(employeeEntity);
