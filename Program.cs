@@ -22,7 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
         });
-        Console.WriteLine("🔗 Configured for Azure SQL Server");
+        Console.WriteLine(" Configured for Azure SQL Server");
     }
     else
     {
@@ -30,7 +30,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         var localConnection = builder.Configuration.GetConnectionString("LocalConnection") ?? connectionString ?? "";
         options.UseMySql(localConnection, MySqlServerVersion.LatestSupportedServerVersion,
             mySqlOptions => mySqlOptions.EnableRetryOnFailure());
-        Console.WriteLine("🔗 Configured for Local MySQL");
+        Console.WriteLine(" Configured for Local MySQL");
     }
 });
 
@@ -56,13 +56,13 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine("Testing database connection...");
         await context.Database.CanConnectAsync();
-        Console.WriteLine("✅ Database connection successful!");
+        Console.WriteLine(" Database connection successful!");
         Console.WriteLine($"Connected to: {context.Database.GetDbConnection().Database}");
         Console.WriteLine($"Provider: {context.Database.ProviderName}");
     }
     catch (Exception ex)
     {
-        Console.WriteLine("❌ Database connection failed!");
+        Console.WriteLine(" Database connection failed!");
         Console.WriteLine($"Error: {ex.Message}");
     }
 }
