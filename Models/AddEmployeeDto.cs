@@ -8,4 +8,10 @@
         public decimal Salary { get; set; }
         // Additional properties can be added as needed
     }
+
+    public class GetEmployeeByNameDto
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
 }
