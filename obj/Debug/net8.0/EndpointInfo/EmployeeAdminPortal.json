@@ -216,7 +216,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StringStringStringStringArrayString<>f__AnonymousType10"
+                  "$ref": "#/components/schemas/StringStringStringStringArrayString<>f__AnonymousType11"
                 }
               }
             }
@@ -325,7 +325,7 @@
         },
         "additionalProperties": { }
       },
-      "StringStringStringStringArrayString<>f__AnonymousType10": {
+      "StringStringStringStringArrayString<>f__AnonymousType11": {
         "type": "object",
         "properties": {
           "message": {

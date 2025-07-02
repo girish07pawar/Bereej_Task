@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeAdminPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250630172458_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250701091031_AddCreatedAndUpdatedColumns")]
+    partial class AddCreatedAndUpdatedColumns
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

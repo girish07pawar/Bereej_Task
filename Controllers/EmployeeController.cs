@@ -64,11 +64,11 @@ namespace EmployeeAdminPortal.Controllers
         {
             try
             {
-                var employeeWithMaxSalary = await DbContext.Employees
-                    .OrderByDescending(e => e.Salary)
+                var employeeWithMinSalary = await DbContext.Employees
+                    .OrderBy(e => e.Salary)
                     .FirstOrDefaultAsync();
 
-                if (employeeWithMaxSalary == null)
+                if (employeeWithMinSalary == null)
                 {
                     return NotFound(new
                     {
@@ -80,8 +80,8 @@ namespace EmployeeAdminPortal.Controllers
                 return Ok(new
                 {
                     success = true,
-                    message = "Employee with highest salary retrieved successfully",
-                    data = employeeWithMaxSalary
+                    message = "Employee with lowest salary retrieved successfully",
+                    data = employeeWithMinSalary
                 });
             }
             catch (Exception ex)
