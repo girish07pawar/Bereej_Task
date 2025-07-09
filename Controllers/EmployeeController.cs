@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace EmployeeAdminPortal.Controllers
 {
@@ -64,12 +65,12 @@ namespace EmployeeAdminPortal.Controllers
         {
             try
             {
-                var employeeWithMinSalary = await DbContext.Employees
-                    .OrderBy(e => e.Salary)
+                var employeeWithMaxSalary = await DbContext.Employees
+                    .OrderByDescending(e => e.Salary)
                     .FirstOrDefaultAsync();
 
-                if (employeeWithMinSalary == null)
-                {
+                if (employeeWithMaxSalary == null)
+                {o
                     return NotFound(new
                     {
                         success = false,
@@ -80,8 +81,8 @@ namespace EmployeeAdminPortal.Controllers
                 return Ok(new
                 {
                     success = true,
-                    message = "Employee with lowest salary retrieved successfully",
-                    data = employeeWithMinSalary
+                    message = "Employee with highest salary retrieved successfully",
+                    data = employeeWithMaxSalary
                 });
             }
             catch (Exception ex)
