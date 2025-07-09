@@ -67,17 +67,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-builder.Services.AddCors(options =>
-{
-options.AddPolicy("AllowAll", policy =>
-{
-    policy
-        .AllowAnyOrigin() // OR use .WithOrigins("http://192.168.56.1:8080") for stricter policy
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-});
-    });
-
 // Configure pipeline - Enable Swagger in all environments for API testing
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -106,9 +95,9 @@ app.MapGet("/api", () => new
     },
     swaggerUrl = "/swagger"
 });
-
-app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.MapControllers();
 
