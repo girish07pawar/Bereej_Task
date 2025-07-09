@@ -139,4 +139,3 @@ E:\Bereej-Task\EmployeeAdminPortal\EmployeeAdminPortal\obj\Debug\net8.0\refint\E
 E:\Bereej-Task\EmployeeAdminPortal\EmployeeAdminPortal\obj\Debug\net8.0\EmployeeAdminPortal.pdb
 E:\Bereej-Task\EmployeeAdminPortal\EmployeeAdminPortal\obj\Debug\net8.0\EmployeeAdminPortal.genruntimeconfig.cache
 E:\Bereej-Task\EmployeeAdminPortal\EmployeeAdminPortal\obj\Debug\net8.0\ref\EmployeeAdminPortal.dll
-E:\Bereej-Task\EmployeeAdminPortal\EmployeeAdminPortal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
