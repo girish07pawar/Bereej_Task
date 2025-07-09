@@ -70,7 +70,7 @@ namespace EmployeeAdminPortal.Controllers
                     .FirstOrDefaultAsync();
 
                 if (employeeWithMaxSalary == null)
-                {o
+                {
                     return NotFound(new
                     {
                         success = false,
