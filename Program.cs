@@ -18,7 +18,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 // Configure Database Context based on environment
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -89,6 +88,9 @@ app.UseSwaggerUI(c =>
     c.DocumentTitle = "Employee Admin Portal API";
 });
 
+// ✅ CORS MUST BE PLACED HERE - BEFORE ANY ROUTES OR CONTROLLERS
+app.UseCors("AllowAll");
+
 // Add a root route that redirects to Swagger
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
@@ -108,9 +110,8 @@ app.MapGet("/api", () => new
     },
     swaggerUrl = "/swagger"
 });
-app.UseCors("AllowAll");
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
